@@ -14,7 +14,6 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
-          cache: 'none'
       - name: Install prod requirements
         run: pip install -r requirements.txt
       - name: Install test requirements
