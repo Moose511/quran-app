@@ -7,17 +7,23 @@ on:
 jobs:
   test:
     runs-on: ubuntu-latest
+    env:
+      PYTHONPATH: .
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
-      - name: Install deps (prod)
+          cache: 'none'
+      - name: Install prod requirements
+        run: pip install -r requirements.txt
+      - name: Install test requirements
+        run: pip install -r requirements-dev.txt
+      - name: Sanity imports (debug)
         run: |
-          pip install -r requirements.txt
-      - name: Install test deps
-        run: |
-          pip install -r requirements-dev.txt
+          python -V
+          python -c "import app, sys; print('app at:', getattr(app,'__file__',None)); print('cwd:', __import__('os').getcwd()); print('sys.path[0:5]:', sys.path[0:5])"
+      - name: Show project tree (debug)
+        run: ls -R
       - name: Run pytest
-        run: |
-          pytest -q
+        run: pytest -q -ra
